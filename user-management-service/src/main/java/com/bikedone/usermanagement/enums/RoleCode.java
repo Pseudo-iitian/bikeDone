@@ -1,11 +1,7 @@
 package com.bikedone.usermanagement.enums;
 
-public enum RoleType {
-
+public enum RoleCode {
     CUSTOMER,
-
     MECHANIC,
-
     ADMIN
-
 }

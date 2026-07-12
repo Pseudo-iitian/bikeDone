@@ -1,12 +1,14 @@
 package com.bikedone.usermanagement.common.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
 
     private boolean success;
@@ -16,5 +18,4 @@ public class ApiResponse<T> {
     private T data;
 
     private LocalDateTime timestamp;
-
 }

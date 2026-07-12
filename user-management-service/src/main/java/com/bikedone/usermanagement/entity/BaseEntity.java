@@ -1,4 +1,4 @@
-package com.bikedone.usermanagement.common.entity;
+package com.bikedone.usermanagement.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
@@ -25,4 +25,6 @@ public abstract class BaseEntity {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted = false;
 }
