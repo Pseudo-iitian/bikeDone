@@ -13,4 +13,6 @@ public class LoginResponse {
 
     private Long expiresIn;
 
+    private UserLoginResponse user;
+
 }

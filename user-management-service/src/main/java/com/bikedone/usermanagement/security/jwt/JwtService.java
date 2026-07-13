@@ -1,6 +1,7 @@
-package com.bikedone.usermanagement.security;
+package com.bikedone.usermanagement.security.jwt;
 
 import com.bikedone.usermanagement.config.JwtProperties;
+import com.bikedone.usermanagement.security.user.UserPrincipal;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -22,18 +23,25 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(String username) {
+    public String generateToken(UserPrincipal userPrincipal) {
 
         Date now = new Date();
 
         Date expiry = new Date(now.getTime() + jwtProperties.getExpiration());
 
         return Jwts.builder()
-                .subject(username)
+                .subject(userPrincipal.getUsername())
+                .claim("userId", userPrincipal.getId())
+                .claim("role",
+                        userPrincipal.getAuthorities()
+                                .iterator()
+                                .next()
+                                .getAuthority())
                 .issuedAt(now)
                 .expiration(expiry)
                 .signWith(getSigningKey())
                 .compact();
+
     }
 
     public String extractUsername(String token) {
@@ -57,6 +65,10 @@ public class JwtService {
                 .parseSignedClaims(token)
                 .getPayload();
 
+    }
+
+    public Long getExpiration() {
+        return jwtProperties.getExpiration();
     }
 
 }

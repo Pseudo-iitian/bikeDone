@@ -2,6 +2,7 @@ package com.bikedone.usermanagement.mapper;
 
 import com.bikedone.usermanagement.dto.request.SignupRequest;
 import com.bikedone.usermanagement.dto.response.SignupResponse;
+import com.bikedone.usermanagement.dto.response.UserLoginResponse;
 import com.bikedone.usermanagement.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -19,4 +20,8 @@ public interface UserMapper {
 
     @Mapping(source = "id", target = "userId")
     SignupResponse toResponse(User user);
+
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "role.roleCode", target = "role")
+    UserLoginResponse toLoginResponse(User user);
 }

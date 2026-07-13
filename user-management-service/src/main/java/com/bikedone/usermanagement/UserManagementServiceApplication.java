@@ -10,7 +10,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 public class UserManagementServiceApplication {
 
 	public static void main(String[] args) {
-		// codex resume 019f55e9-d49d-71d1-a752-d60a6d6c158d
-		SpringApplication.run(UserManagementServiceApplication.class, args);
+//		codex resume 019f5962-87e3-7411-94d6-0339501ab27d
+	SpringApplication.run(UserManagementServiceApplication.class, args);
 	}
 }
