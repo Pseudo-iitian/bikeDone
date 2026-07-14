@@ -2,7 +2,7 @@ CREATE TABLE refresh_tokens
 (
     id UUID PRIMARY KEY,
     user_id UUID NOT NULL,
-    token VARCHAR(500) NOT NULL,
+    token_hash VARCHAR(500) NOT NULL UNIQUE,
     device_id VARCHAR(255),
     device_name VARCHAR(255),
     ip_address VARCHAR(100),
@@ -21,8 +21,8 @@ CREATE TABLE refresh_tokens
 CREATE INDEX idx_refresh_token_user
     ON refresh_tokens(user_id);
 
-CREATE INDEX idx_refresh_token_token
-    ON refresh_tokens(token);
+CREATE INDEX idx_refresh_token_token_hash
+    ON refresh_tokens(token_hash);
 
 CREATE INDEX idx_refresh_token_revoked
     ON refresh_tokens(revoked);
