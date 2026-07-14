@@ -5,7 +5,7 @@ import com.bikedone.usermanagement.dto.request.LoginRequest;
 import com.bikedone.usermanagement.dto.request.SignupRequest;
 import com.bikedone.usermanagement.dto.response.LoginResponse;
 import com.bikedone.usermanagement.dto.response.SignupResponse;
-import com.bikedone.usermanagement.service.AuthService;
+import com.bikedone.usermanagement.security.authentication.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

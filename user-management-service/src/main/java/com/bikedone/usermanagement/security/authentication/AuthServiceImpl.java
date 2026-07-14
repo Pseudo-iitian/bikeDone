@@ -1,4 +1,4 @@
-package com.bikedone.usermanagement.service.impl;
+package com.bikedone.usermanagement.security.authentication;
 
 import com.bikedone.usermanagement.dto.request.LoginRequest;
 import com.bikedone.usermanagement.dto.request.SignupRequest;
@@ -14,7 +14,6 @@ import com.bikedone.usermanagement.repository.RoleRepository;
 import com.bikedone.usermanagement.repository.UserRepository;
 import com.bikedone.usermanagement.security.jwt.JwtService;
 import com.bikedone.usermanagement.security.user.UserPrincipal;
-import com.bikedone.usermanagement.service.AuthService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;

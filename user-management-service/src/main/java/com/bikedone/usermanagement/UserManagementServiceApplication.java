@@ -11,6 +11,6 @@ public class UserManagementServiceApplication {
 
 	public static void main(String[] args) {
 //		codex resume 019f5962-87e3-7411-94d6-0339501ab27d
-	SpringApplication.run(UserManagementServiceApplication.class, args);
+		SpringApplication.run(UserManagementServiceApplication.class, args);
 	}
 }

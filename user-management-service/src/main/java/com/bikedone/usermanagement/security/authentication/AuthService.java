@@ -1,4 +1,4 @@
-package com.bikedone.usermanagement.service;
+package com.bikedone.usermanagement.security.authentication;
 
 import com.bikedone.usermanagement.dto.request.LoginRequest;
 import com.bikedone.usermanagement.dto.request.SignupRequest;
