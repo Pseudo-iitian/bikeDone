@@ -55,21 +55,21 @@ public class RefreshToken extends BaseEntity{
     @Column(name = "revoked_at")
     private LocalDateTime revokedAt;
 
-    public boolean isExpired() {
-        return expiresAt.isBefore(LocalDateTime.now());
+    public boolean isExpired(LocalDateTime currentTime) {
+        return expiresAt.isBefore(currentTime);
     }
 
     public boolean isActive() {
-        return !revoked && !isExpired();
+        return !revoked && !isExpired(LocalDateTime.now());
     }
 
-    public void revoke() {
+    public void revoke(LocalDateTime dateTime) {
         this.revoked = true;
-        this.revokedAt = LocalDateTime.now();
+        this.revokedAt = dateTime;
     }
 
-    public void markAsUsed() {
-        this.lastUsedAt = LocalDateTime.now();
+    public void markAsUsed(LocalDateTime dateTime) {
+        this.lastUsedAt = dateTime;
     }
 
 }

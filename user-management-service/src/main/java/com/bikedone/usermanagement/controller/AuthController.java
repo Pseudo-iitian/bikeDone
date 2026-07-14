@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 
 @RestController
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 public class AuthController {
 
     private final AuthService authService;
+    private final Clock appClock;
 
     @PostMapping("/signup")
     public ApiResponse<SignupResponse> signup(@Valid @RequestBody SignupRequest request) {
@@ -28,7 +30,7 @@ public class AuthController {
                 .success(true)
                 .message("Customer registered successfully.")
                 .data(response)
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now(appClock))
                 .build();
 
     }
