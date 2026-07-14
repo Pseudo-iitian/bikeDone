@@ -2,6 +2,15 @@ spring:
   application:
     name: user-management-service
 
+  jackson:
+    time-zone: Asia/Kolkata
+
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: Asia/Kolkata
+
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:${SPRING_PROFILE:dev}}
 
@@ -23,4 +32,5 @@ logging:
 
 jwt:
   secret: ${JWT_SECRET}
-  expiration: ${JWT_EXPIRATION}
+  access-token-expiration: ${JWT_ACCESS_TOKEN_EXPIRATION}
+  refresh-token-expiration: ${JWT_REFRESH_TOKEN_EXPIRATION}

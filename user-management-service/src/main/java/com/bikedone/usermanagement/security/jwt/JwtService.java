@@ -27,9 +27,10 @@ public class JwtService {
 
         Date now = new Date();
 
-        Date expiry = new Date(now.getTime() + jwtProperties.getExpiration());
+        Date expiry = new Date(now.getTime() + jwtProperties.getAccessTokenExpiration());
 
         return Jwts.builder()
+                .issuer("BikeDone")
                 .subject(userPrincipal.getUsername())
                 .claim("userId", userPrincipal.getId())
                 .claim("role",
@@ -68,7 +69,7 @@ public class JwtService {
     }
 
     public Long getExpiration() {
-        return jwtProperties.getExpiration();
+        return jwtProperties.getAccessTokenExpiration();
     }
 
 }

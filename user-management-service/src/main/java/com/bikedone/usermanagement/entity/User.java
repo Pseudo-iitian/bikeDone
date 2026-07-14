@@ -46,4 +46,7 @@ public class User extends BaseEntity {
     @JoinColumn(name = "role_id")
     private Role role;
 
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean deleted = false;
+
 }

@@ -1,5 +1,7 @@
 package com.bikedone.usermanagement.security.authentication;
 
+import com.bikedone.usermanagement.config.JwtProperties;
+import com.bikedone.usermanagement.constants.SecurityConstants;
 import com.bikedone.usermanagement.dto.request.LoginRequest;
 import com.bikedone.usermanagement.dto.request.SignupRequest;
 import com.bikedone.usermanagement.dto.response.LoginResponse;
@@ -13,6 +15,8 @@ import com.bikedone.usermanagement.mapper.UserMapper;
 import com.bikedone.usermanagement.repository.RoleRepository;
 import com.bikedone.usermanagement.repository.UserRepository;
 import com.bikedone.usermanagement.security.jwt.JwtService;
+import com.bikedone.usermanagement.security.token.RefreshTokenResult;
+import com.bikedone.usermanagement.security.token.RefreshTokenService;
 import com.bikedone.usermanagement.security.user.UserPrincipal;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +43,10 @@ public class AuthServiceImpl implements AuthService {
 
     private final JwtService jwtService;
 
+    private final JwtProperties jwtProperties;
+
+    private final RefreshTokenService refreshTokenService;
+
     @Override
     public SignupResponse signup(SignupRequest request) {
 
@@ -56,19 +64,14 @@ public class AuthServiceImpl implements AuthService {
         User user = userMapper.toEntity(request);
 
         user.setRole(role);
-
         user.setStatus(UserStatus.ACTIVE);
-
         user.setEmailVerified(false);
-
         user.setMobileVerified(false);
-
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         User savedUser = userRepository.save(user);
 
         return userMapper.toResponse(savedUser);
-
     }
 
     @Override
@@ -76,27 +79,31 @@ public class AuthServiceImpl implements AuthService {
 
         Authentication authentication =
                 authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(request.getEmail(),request.getPassword())
+                        new UsernamePasswordAuthenticationToken(
+                                request.getEmail(),
+                                request.getPassword()
+                        )
                 );
 
         UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
 
+        User user = userRepository.findByEmail(principal.getUsername())
+                .orElseThrow(() -> new BadRequestException("User not found"));
+
+        // Generate Access Token
         String accessToken = jwtService.generateToken(principal);
 
-        User user = userRepository.findByEmail(principal.getUsername())
-                        .orElseThrow();
+        // Generate & Save Refresh Token
+        RefreshTokenResult refreshTokenResult =
+                refreshTokenService.createRefreshToken(user);
 
         return LoginResponse.builder()
-
                 .accessToken(accessToken)
-
-                .tokenType("Bearer")
-
-                .expiresIn(jwtService.getExpiration())
-
+                .refreshToken(refreshTokenResult.getRawToken())
+                .tokenType(SecurityConstants.TOKEN_TYPE)
+                .accessTokenExpiresIn(jwtProperties.getAccessTokenExpiration())
+                .refreshTokenExpiresIn(jwtProperties.getRefreshTokenExpiration())
                 .user(userMapper.toLoginResponse(user))
-
                 .build();
-
     }
 }
