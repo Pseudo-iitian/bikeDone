@@ -8,9 +8,6 @@ import com.bikedone.usermanagement.exception.BadRequestException;
 import com.bikedone.usermanagement.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.time.Clock;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -24,7 +21,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     private final TokenHasher tokenHasher;
 
     private final JwtProperties jwtProperties;
-    private final Clock appClock;
+
     private final DateTimeProvider dateTimeProvider;
 
     @Override
@@ -65,11 +62,11 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                 .orElseThrow(() ->
                         new BadRequestException("Invalid refresh token."));
 
-        if (refreshToken.isExpired(LocalDateTime.now(appClock))) {
+        if (refreshToken.isExpired(dateTimeProvider.now())) {
             throw new BadRequestException("Refresh token has expired.");
         }
 
-        refreshToken.markAsUsed(LocalDateTime.now(appClock));
+        refreshToken.markAsUsed(dateTimeProvider.now());
 
         return refreshTokenRepository.save(refreshToken);
     }
@@ -77,7 +74,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Override
     public void revokeToken(RefreshToken refreshToken) {
 
-        refreshToken.revoke(LocalDateTime.now(appClock));
+        refreshToken.revoke(dateTimeProvider.now());
 
         refreshTokenRepository.save(refreshToken);
     }
@@ -89,7 +86,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                 .findAllByUser_IdAndRevokedFalse(userId)
                 .forEach(token -> {
 
-                    token.revoke(LocalDateTime.now(appClock));
+                    token.revoke(dateTimeProvider.now());
 
                     refreshTokenRepository.save(token);
 

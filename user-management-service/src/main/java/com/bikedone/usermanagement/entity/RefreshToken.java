@@ -59,8 +59,8 @@ public class RefreshToken extends BaseEntity{
         return expiresAt.isBefore(currentTime);
     }
 
-    public boolean isActive() {
-        return !revoked && !isExpired(LocalDateTime.now());
+    public boolean isActive(LocalDateTime currentTime) {
+        return !revoked && !isExpired(currentTime);
     }
 
     public void revoke(LocalDateTime dateTime) {

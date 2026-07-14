@@ -1,5 +1,6 @@
 package com.bikedone.usermanagement.exception;
 
+import com.bikedone.usermanagement.common.datetime.DateTimeProvider;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,12 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private final DateTimeProvider dateTimeProvider;
+
+    public GlobalExceptionHandler(DateTimeProvider dateTimeProvider) {
+        this.dateTimeProvider = dateTimeProvider;
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFound(ResourceNotFoundException ex){
 
@@ -20,7 +27,7 @@ public class GlobalExceptionHandler {
                 .success(false)
                 .message(ex.getMessage())
                 .errors(List.of())
-                .timestamp(LocalDateTime.now())
+                .timestamp(dateTimeProvider.now())
                 .build();
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
@@ -34,7 +41,7 @@ public class GlobalExceptionHandler {
                 .success(false)
                 .message(ex.getMessage())
                 .errors(List.of())
-                .timestamp(LocalDateTime.now())
+                .timestamp(dateTimeProvider.now())
                 .build();
 
         return ResponseEntity.badRequest().body(response);
@@ -54,7 +61,7 @@ public class GlobalExceptionHandler {
                 .success(false)
                 .message("Validation Failed")
                 .errors(errors)
-                .timestamp(LocalDateTime.now())
+                .timestamp(dateTimeProvider.now())
                 .build();
 
         return ResponseEntity.badRequest().body(response);
@@ -68,7 +75,7 @@ public class GlobalExceptionHandler {
                 .success(false)
                 .message(ex.getMessage())
                 .errors(List.of())
-                .timestamp(LocalDateTime.now())
+                .timestamp(dateTimeProvider.now())
                 .build();
 
         return ResponseEntity.badRequest().body(response);
@@ -82,7 +89,7 @@ public class GlobalExceptionHandler {
                 .success(false)
                 .message("Something went wrong.")
                 .errors(List.of(ex.getMessage()))
-                .timestamp(LocalDateTime.now())
+                .timestamp(dateTimeProvider.now())
                 .build();
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

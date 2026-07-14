@@ -1,5 +1,6 @@
 package com.bikedone.usermanagement.controller;
 
+import com.bikedone.usermanagement.common.datetime.DateTimeProvider;
 import com.bikedone.usermanagement.common.response.ApiResponse;
 import com.bikedone.usermanagement.dto.request.LoginRequest;
 import com.bikedone.usermanagement.dto.request.SignupRequest;
@@ -10,8 +11,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Clock;
-import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -19,7 +18,7 @@ import java.time.LocalDateTime;
 public class AuthController {
 
     private final AuthService authService;
-    private final Clock appClock;
+    private final DateTimeProvider dateTimeProvider;
 
     @PostMapping("/signup")
     public ApiResponse<SignupResponse> signup(@Valid @RequestBody SignupRequest request) {
@@ -30,7 +29,7 @@ public class AuthController {
                 .success(true)
                 .message("Customer registered successfully.")
                 .data(response)
-                .timestamp(LocalDateTime.now(appClock))
+                .timestamp(dateTimeProvider.now())
                 .build();
 
     }
@@ -45,7 +44,7 @@ public class AuthController {
                 .success(true)
                 .message("Login successful.")
                 .data(response)
-                .timestamp(LocalDateTime.now())
+                .timestamp(dateTimeProvider.now())
                 .build();
     }
 
