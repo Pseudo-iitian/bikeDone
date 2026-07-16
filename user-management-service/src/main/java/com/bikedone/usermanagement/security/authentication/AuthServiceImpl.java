@@ -3,9 +3,11 @@ package com.bikedone.usermanagement.security.authentication;
 import com.bikedone.usermanagement.config.JwtProperties;
 import com.bikedone.usermanagement.constants.SecurityConstants;
 import com.bikedone.usermanagement.dto.request.LoginRequest;
+import com.bikedone.usermanagement.dto.request.RefreshTokenRequest;
 import com.bikedone.usermanagement.dto.request.SignupRequest;
 import com.bikedone.usermanagement.dto.response.LoginResponse;
 import com.bikedone.usermanagement.dto.response.SignupResponse;
+import com.bikedone.usermanagement.entity.RefreshToken;
 import com.bikedone.usermanagement.entity.Role;
 import com.bikedone.usermanagement.entity.User;
 import com.bikedone.usermanagement.enums.RoleCode;
@@ -87,7 +89,7 @@ public class AuthServiceImpl implements AuthService {
 
         UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
 
-        User user = userRepository.findByEmail(principal.getUsername())
+        User user = userRepository.findUserWithRoleByEmail(principal.getUsername())
                 .orElseThrow(() -> new BadRequestException("User not found"));
 
         // Generate Access Token
@@ -106,4 +108,40 @@ public class AuthServiceImpl implements AuthService {
                 .user(userMapper.toLoginResponse(user))
                 .build();
     }
+
+    @Override
+    public LoginResponse refresh(RefreshTokenRequest request) {
+
+        // Validate old refresh token
+        RefreshToken existingRefreshToken =
+                refreshTokenService.validateRefreshToken(
+                        request.getRefreshToken()
+                );
+
+        User user = existingRefreshToken.getUser();
+
+        // Build principal
+        UserPrincipal principal = new UserPrincipal(user);
+
+        // Generate new access token
+        String accessToken =
+                jwtService.generateToken(principal);
+
+        // Revoke old refresh token
+        refreshTokenService.revokeToken(existingRefreshToken);
+
+        // Generate new refresh token
+        RefreshTokenResult refreshTokenResult =
+                refreshTokenService.createRefreshToken(user);
+
+        return LoginResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshTokenResult.getRawToken())
+                .tokenType(SecurityConstants.TOKEN_TYPE)
+                .accessTokenExpiresIn(jwtProperties.getAccessTokenExpiration())
+                .refreshTokenExpiresIn(jwtProperties.getRefreshTokenExpiration())
+                .user(userMapper.toLoginResponse(user))
+                .build();
+    }
+
 }

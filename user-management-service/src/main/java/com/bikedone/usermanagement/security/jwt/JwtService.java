@@ -51,13 +51,6 @@ public class JwtService {
 
     }
 
-    public boolean isTokenValid(String token, String username) {
-
-        return extractUsername(token).equals(username)
-                && !extractAllClaims(token).getExpiration().before(new Date());
-
-    }
-
     private Claims extractAllClaims(String token) {
 
         return Jwts.parser()
@@ -72,4 +65,20 @@ public class JwtService {
         return jwtProperties.getAccessTokenExpiration();
     }
 
+    public boolean isTokenExpired(String token) {
+
+        return extractAllClaims(token)
+                .getExpiration()
+                .before(new Date());
+
+    }
+
+    public boolean validateToken(String token, UserPrincipal userPrincipal) {
+
+        String username = extractUsername(token);
+
+        return username.equals(userPrincipal.getUsername())
+                && !isTokenExpired(token);
+
+    }
 }

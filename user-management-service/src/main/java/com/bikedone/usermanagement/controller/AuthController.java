@@ -10,6 +10,7 @@ import com.bikedone.usermanagement.security.authentication.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import com.bikedone.usermanagement.dto.request.RefreshTokenRequest;
 
 
 @RestController
@@ -43,6 +44,20 @@ public class AuthController {
         return ApiResponse.<LoginResponse>builder()
                 .success(true)
                 .message("Login successful.")
+                .data(response)
+                .timestamp(dateTimeProvider.now())
+                .build();
+    }
+
+    @PostMapping("/refresh")
+    public ApiResponse<LoginResponse> refresh(
+            @Valid @RequestBody RefreshTokenRequest request) {
+
+        LoginResponse response = authService.refresh(request);
+
+        return ApiResponse.<LoginResponse>builder()
+                .success(true)
+                .message("Token refreshed successfully.")
                 .data(response)
                 .timestamp(dateTimeProvider.now())
                 .build();
